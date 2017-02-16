@@ -1,0 +1,85 @@
+1. 	스프링 환경설정
+	Java Resource
+		src/main/java - 클래스
+		src/main/resources
+			mybatis mappers - 로그 관련파일들
+			mybatis - 설정파일
+		src/test/java
+			테스트 케이스 클래스
+		src/test/resources
+			테스트 관련 리소스
+	
+	src/main/wepapp
+		Dynamic Web Project의 WebContent에 해당
+		WEB-INF 시스템 디렉토리 (외부에서 접근 불가) - jsp파일을 바로 실행 시킬수 없다, controller를 항상 경유해야한다.
+		spring 스프링 설정파일
+			root-context.xml - 서블릿 이외의 설정(DB)
+			servlet-context.xml - (View Resolver, 리소스) controller, DAO, service bean
+		
+		web.xml - 웹프로젝트의 배치기술서
+		pom.xml - 메이븐의 설정파일
+
+2.	war파일을
+	tomcat디렉토리에 복사
+		
+		
+		
+3.  스프링설정
+	1) pom.xml의 <properties> 이하 교체
+	2) src/main/resources 파일 복사
+	3) servlet-context.xml 교체
+		스프링에서 관리하는 bean의 경로
+		<context:componet-scan base-package="패키지이름">
+	4) root-context.xml 교체
+
+	
+4.	web.xml의 EncodingFilter 추가
+
+5.	메이븐 저장소
+	http://mvnrepository.com
+	
+6.	기본게시판
+	----------------------------------------------------------------------------------
+	게시글 목록 흐름도
+								컨트롤러
+	../board/list.do	==>		BoardController.java
+								
+								서비스
+								BoardService.java(인터페이스)
+								BoardServiceImpl(구현클래스)
+								
+								모델
+								BoardVO.java(데이터저장소)
+								BoardDAO.java(인터페이스)
+								BoardDAOImpl.java(구현클래스)
+								boardMapper.xml(mybatis mapper)
+								
+								뷰
+								list.jsp
+								
+	----------------------------------------------------------------------------------
+	게시글 작성 흐름도
+	write.do		==>		write.jsp
+	insert.do		==>		게시글 등록 처리		==>		list.do(redirect)
+	----------------------------------------------------------------------------------
+	게시글 상세보기 흐름도
+	view.do			==>		
+	----------------------------------------------------------------------------------
+	조회수 증가 처리
+	1번 게시물 열람 - 오전 10:36:10 ==> 조회수 증가O
+	1번 게시물 열람 - 오전 10:36:11 ==> 조회수 증가X
+	누가, 몇번 게시물을, 언제(시간) 열람했는지 저장해야 조회수를 중복으로 증가시키지 않는다.
+	열람기록을 저장하는 방법은 테이블, 쿠키, 세션 3가지 방법이 있다.
+	
+	세션에 저장하는 방법
+	세션에 저장 : 세션.setAttribute(key, value)
+	세션에서 읽어오기 : 세션.getAttribute(key)
+	session.setAttribute("update_time_"+bno, current_time);
+	session.getAttribute("update_time_"+bno);
+	----------------------------------------------------------------------------------
+7.	패키지 구조
+	com.example.spring02.controller.board
+	com.example.spring02.service.board
+	com.example.spring02.model.board.dto
+	com.example.spring02.model.board.dao
+								

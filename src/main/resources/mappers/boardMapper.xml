@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<!-- 01. 게시글 전체 목록 조회 및 검색조회까지 -->
+	<select id="listAll" resultType="com.example.spring02.model.board.dto.BoardVO">
+		SELECT bno, title, content, writer, regdate, viewcnt 
+		FROM tbl_board
+		<!-- WHERE절을 include 태그로 삽입 -->
+		<include refid="search"></include>
+		ORDER BY bno desc, regdate desc
+	</select>
+	<!-- 01_02. 게시글 레코드 갯수 -->
+	<select id="countArticle" resultType="int">
+		SELECT COUNT(*) FROM tbl_board
+		<!-- WHERE절을 include 태그로 삽입 -->
+		<include refid="search"></include>
+	</select>
+	
+	<!-- 02. 게시글 작성 -->
+	<insert id="insert">
+		INSERT INTO tbl_board (
+		  bno, 
+		  title, 
+		  content, 
+		  writer
+		) VALUES (
+		  (SELECT NVL(MAX(bno)+1, 1)FROM tbl_board),
+		  #{title},
+		  #{content},
+		  #{writer}
+		)
+	</insert>
+	<!--03. 게시글 상세보기 조회 -->
+	<select id="view" resultType="com.example.spring02.model.board.dto.BoardVO">
+		SELECT * FROM tbl_board 
+		WHERE bno = #{bno}
+	</select>
+	<!-- 04. 게시글 조회수 증가처리 -->
+	<update id="increaseViewcnt">
+		UPDATE tbl_board SET viewcnt = viewcnt + 1 
+		WHERE bno = #{bno}
+	</update>
+	<!-- 05. 게시글 수정처리 -->
+	<update id="updateArticle">
+		UPDATE tbl_board SET
+			title = #{title},
+			content = #{content},
+			writer = #{writer}
+		WHERE bno = #{bno}
+	</update>
+	<!-- 06. 게시글 삭제처리 -->
+	<delete id="deleteArticle">
+		DELETE FROM tbl_board
+		WHERE bno = #{bno}
+	</delete>
+	
+	<!-- sql code 조각 -->
+	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 빼둘수 있다. -->
+	<sql id="search">
+		<choose>
+			<!-- 검색옵션이 전체 검색일 경우 -->
+			<when test="searchOption == 'all'">
+				WHERE writer like '%'||#{keyword}||'%'
+				OR content like '%'||#{keyword}||'%'
+				OR title like '%'||#{keyword}||'%'
+			</when>
+			<!-- 전체 검색이 아닐 경우 -->
+			<otherwise>
+				WHERE ${searchOption} like '%'||#{keyword}||'%'
+			</otherwise>
+		</choose>
+	</sql>
+</mapper>
