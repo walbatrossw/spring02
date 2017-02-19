@@ -3,14 +3,26 @@
 <mapper namespace="board">
 	<!-- 01. 게시글 전체 목록 조회 및 검색조회까지 -->
 	<select id="listAll" resultType="com.example.spring02.model.board.dto.BoardVO">
-		<!-- 회원권환이 없는 게시글 목록 쿼리
+		
+		<!-- 01. 회원권환이 없는 게시글 목록 쿼리
 		SELECT bno, title, content, writer, regdate, viewcnt 
 		FROM tbl_board -->
+		
+		<!-- 02. 회원 권한이 있는 게시글 목록 쿼리
 		SELECT bno, title, content, b.regdate, viewcnt, user_name AS userName
-		FROM tbl_board b, tbl_member m
+		FROM tbl_board b, tbl_member m -->
 		<!-- WHERE절을 include 태그로 삽입 -->
-		<include refid="search"></include>
-		ORDER BY bno desc, regdate desc
+		<!-- <include refid="search"></include>
+		ORDER BY bno desc, regdate desc -->
+		
+		<!-- 03. 페이지 나누기 쿼리 -->
+		<include refid="pagingHeader"></include>
+			SELECT ROWNUM, bno, title, content, b.regdate, viewcnt, user_name as userName
+			FROM tbl_board b, tbl_member m
+			<include refid="search"></include>
+			ORDER BY bno DESC, b.regdate DESC 
+		<include refid="pagingFooter"></include>	
+		
 	</select>
 	<!-- 01_02. 게시글 레코드 갯수 -->
 	<select id="countArticle" resultType="int">
@@ -63,6 +75,7 @@
 	
 	<!-- sql code 조각 -->
 	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 빼둘수 있다. -->
+	<!-- 검색 조건 sql -->
 	<sql id="search">
 		<choose>
 			<!-- 검색옵션이 전체 검색일 경우 -->
@@ -79,5 +92,15 @@
 				AND ${searchOption} like '%'||#{keyword}||'%'
 			</otherwise>
 		</choose>
+	</sql>
+	
+	<!-- 페이징 sql -->
+	<sql id="pagingHeader">
+		SELECT * FROM (
+			SELECT ROWNUM AS rn, A.* FROM (
+	</sql>
+	<sql id="pagingFooter">
+			) A
+		) WHERE rn BETWEEN #{start} AND #{end}
 	</sql>
 </mapper>

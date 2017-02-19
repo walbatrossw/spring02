@@ -7,6 +7,11 @@
 <%@ include file="../include/header.jsp" %>
 <script>
 	$(document).ready(function(){
+		// ** 목록 버튼 클릭 이벤트 : 버튼 클릭시 상세보기화면에 있던 페이지, 검색옵션, 키워드 값을 가지로 목록으로 이동
+		$("#btnList").click(function(){
+			location.href="${path}/board/list.do?curPage=${curPage}&searchOption=${searchOption}&keyword=${keyword}";
+		});
+		
 		$("#btnDelete").click(function(){
 			if(confirm("삭제하시겠습니까?")){
 				document.form1.action = "${path}/board/delete.do";
@@ -76,6 +81,8 @@
 		<button type="button" id="btnUpdete">수정</button>
 		<button type="button" id="btnDelete">삭제</button>
 	</c:if>
+		<!-- **상세보기 화면에서 게시글 목록화면으로 이동 -->
+		<button type="button" id="btnList">목록</button>
 	</div>
 </form>
 </body>
