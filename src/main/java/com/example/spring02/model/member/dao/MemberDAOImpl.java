@@ -15,13 +15,13 @@ public class MemberDAOImpl implements MemberDAO {
 	@Inject
 	SqlSession sqlSession; // mybatis 실행 객체
 	
-	// 01. 회원 로그인체크
+	// 01_01. 회원 로그인체크
 	@Override
 	public boolean loginCheck(MemberVO vo) {
 		String name = sqlSession.selectOne("member.loginCheck", vo);
 		return (name == null) ? false : true;
 	}
-	// 01. 회원 로그인 정보
+	// 01_02. 회원 로그인 정보
 	@Override
 	public MemberVO viewMember(MemberVO vo) {
 		return sqlSession.selectOne("member.viewMember", vo);
@@ -29,9 +29,5 @@ public class MemberDAOImpl implements MemberDAO {
 	// 02. 회원 로그아웃
 	@Override
 	public void logout(HttpSession sessin) {
-		// TODO Auto-generated method stub
-		
 	}
-	
-
 }

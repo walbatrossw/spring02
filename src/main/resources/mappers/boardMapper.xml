@@ -3,15 +3,19 @@
 <mapper namespace="board">
 	<!-- 01. 게시글 전체 목록 조회 및 검색조회까지 -->
 	<select id="listAll" resultType="com.example.spring02.model.board.dto.BoardVO">
+		<!-- 회원권환이 없는 게시글 목록 쿼리
 		SELECT bno, title, content, writer, regdate, viewcnt 
-		FROM tbl_board
+		FROM tbl_board -->
+		SELECT bno, title, content, b.regdate, viewcnt, user_name AS userName
+		FROM tbl_board b, tbl_member m
 		<!-- WHERE절을 include 태그로 삽입 -->
 		<include refid="search"></include>
 		ORDER BY bno desc, regdate desc
 	</select>
 	<!-- 01_02. 게시글 레코드 갯수 -->
 	<select id="countArticle" resultType="int">
-		SELECT COUNT(*) FROM tbl_board
+		SELECT COUNT(*) 
+		FROM tbl_board b, tbl_member m
 		<!-- WHERE절을 include 태그로 삽입 -->
 		<include refid="search"></include>
 	</select>
@@ -32,8 +36,11 @@
 	</insert>
 	<!--03. 게시글 상세보기 조회 -->
 	<select id="view" resultType="com.example.spring02.model.board.dto.BoardVO">
-		SELECT * FROM tbl_board 
-		WHERE bno = #{bno}
+		<!-- SELECT * FROM tbl_board  -->
+		SELECT bno, title, content, b.regdate, writer, viewcnt, user_name AS userName 
+		FROM tbl_board b, tbl_member m
+		WHERE b.writer = m.user_id 
+		AND bno = #{bno}
 	</select>
 	<!-- 04. 게시글 조회수 증가처리 -->
 	<update id="increaseViewcnt">
@@ -44,8 +51,8 @@
 	<update id="updateArticle">
 		UPDATE tbl_board SET
 			title = #{title},
-			content = #{content},
-			writer = #{writer}
+			content = #{content}
+			<!-- writer = #{writer} -->
 		WHERE bno = #{bno}
 	</update>
 	<!-- 06. 게시글 삭제처리 -->
@@ -60,13 +67,16 @@
 		<choose>
 			<!-- 검색옵션이 전체 검색일 경우 -->
 			<when test="searchOption == 'all'">
-				WHERE writer like '%'||#{keyword}||'%'
+				WHERE b.writer = m.user_id
+				AND	
+				(user_name like '%'||#{keyword}||'%'
 				OR content like '%'||#{keyword}||'%'
-				OR title like '%'||#{keyword}||'%'
+				OR title like '%'||#{keyword}||'%')
 			</when>
 			<!-- 전체 검색이 아닐 경우 -->
 			<otherwise>
-				WHERE ${searchOption} like '%'||#{keyword}||'%'
+				WHERE b.writer = m.user_id 
+				AND ${searchOption} like '%'||#{keyword}||'%'
 			</otherwise>
 		</choose>
 	</sql>

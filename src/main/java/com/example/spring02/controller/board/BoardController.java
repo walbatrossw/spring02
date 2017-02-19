@@ -61,7 +61,11 @@ public class BoardController {
 	
 	// 02_02. 게시글 작성처리
 	@RequestMapping(value="insert.do", method=RequestMethod.POST)
-	public String insert(@ModelAttribute BoardVO vo) throws Exception{
+	public String insert(@ModelAttribute BoardVO vo, HttpSession session) throws Exception{
+		// session에 저장된 userId를 writer에 저장
+		String writer = (String) session.getAttribute("userId");
+		// vo에 writer를 세팅
+		vo.setWriter(writer);
 		boardService.create(vo);
 		return "redirect:list.do";
 	}

@@ -14,7 +14,7 @@ public class MemberServiceImpl implements MemberService {
 	@Inject
 	MemberDAO memberDao;
 	
-	// 01. 회원 로그인체크
+	// 01_01. 회원 로그인체크
 	@Override
 	public boolean loginCheck(MemberVO vo, HttpSession session) {
 		boolean result = memberDao.loginCheck(vo);
@@ -26,12 +26,12 @@ public class MemberServiceImpl implements MemberService {
 		} 
 		return result;
 	}
-	
+	// 01_02. 회원 로그인 정보
 	@Override
 	public MemberVO viewMember(MemberVO vo) {
 		return memberDao.viewMember(vo);
 	}
-	
+	// 02. 회원 로그아웃
 	@Override
 	public void logout(HttpSession session) {
 		// 세션 변수 개별 삭제
@@ -39,7 +39,4 @@ public class MemberServiceImpl implements MemberService {
 		// 세션 정보를 초기화 시킴
 		session.invalidate();
 	}
-
-	
-
 }

@@ -21,13 +21,16 @@
 		<select name="searchOption">
 			<!-- 검색조건을 검색처리후 결과화면에 보여주기위해  c:out 출력태그 사용, 삼항연산자 -->
 			<option value="all" <c:out value="${map.searchOption == 'all'?'selected':''}"/> >제목+이름+제목</option>
-			<option value="writer" <c:out value="${map.searchOption == 'writer'?'selected':''}"/> >이름</option>
+			<option value="user_name" <c:out value="${map.searchOption == 'user_name'?'selected':''}"/> >이름</option>
 			<option value="content" <c:out value="${map.searchOption == 'content'?'selected':''}"/> >내용</option>
 			<option value="title" <c:out value="${map.searchOption == 'title'?'selected':''}"/> >제목</option>
 		</select>
 		<input name="keyword" value="${map.keyword}">
 		<input type="submit" value="조회">
+	<!-- 로그인한 사용자만 글쓰기 버튼을 활성화 -->
+	<c:if test="${sessionScope.userId != null}">
 		<button type="button" id="btnWrite">글쓰기</button>
+	</c:if>
 	</form>
 	<!-- 레코드의 갯수를 출력 -->
 	${map.count}개의 게시물이 있습니다.
@@ -43,7 +46,7 @@
 		<tr>
 			<td>${row.bno}</td>
 			<td><a href="${path}/board/view.do?bno=${row.bno}">${row.title}</a></td>
-			<td>${row.writer}</td>
+			<td>${row.userName}</td>
 			<td>
 				<!-- 원하는 날짜형식으로 출력하기 위해 fmt태그 사용 -->
 				<fmt:formatDate value="${row.regdate}" pattern="yyyy-MM-dd HH:mm:ss"/>

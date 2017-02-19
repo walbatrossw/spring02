@@ -22,7 +22,6 @@
 				$("#userPw").focus();
 				return;
 			}
-			alert("로그인 하셨습니다.");
 			// 폼 내부의 데이터를 전송할 주소
 			document.form1.action="${path}/member/loginCheck.do"
 			// 제출
