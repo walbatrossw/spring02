@@ -50,7 +50,6 @@ public class BoardController {
 		mav.setViewName("board/list"); // 뷰를 list.jsp로 설정
 		return mav; // list.jsp로 List가 전달된다.
 	}
-	
 	// 02_01. 게시글 작성화면
 	// @RequestMapping("board/write.do")
 	// value="", method="전송방식"
@@ -100,5 +99,4 @@ public class BoardController {
 		boardService.delete(bno);
 		return "redirect:list.do";
 	}
-	
 }
