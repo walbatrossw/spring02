@@ -12,7 +12,7 @@
 			location.href = "${path}/board/write.do";
 		});
 	});
-	// **원하는 페이지로 이동시 검색조건, 키워드 값을 유지하기 위해 
+	// 원하는 페이지로 이동시 검색조건, 키워드 값을 유지하기 위해 
 	function list(page){
 		location.href="${path}/board/list.do?curPage="+page+"&searchOption-${map.searchOption}"+"&keyword=${map.keyword}";
 	}
@@ -49,8 +49,16 @@
 		<c:forEach var="row" items="${map.list}">
 		<tr>
 			<td>${row.bno}</td>
-			<!-- ** 게시글 상세보기 페이지로 이동시 게시글 목록페이지에 있는 검색조건, 키워드, 현재페이지 값을 유지하기 위해 -->
-			<td><a href="${path}/board/view.do?bno=${row.bno}&curPage=${map.boardPager.curPage}&searchOption=${map.searchOption}&keyword=${map.keyword}">${row.title}</a></td>
+			<!-- 게시글 상세보기 페이지로 이동시 게시글 목록페이지에 있는 검색조건, 키워드, 현재페이지 값을 유지하기 위해 -->
+			<td>
+				<a href="${path}/board/view.do?bno=${row.bno}&curPage=${map.boardPager.curPage}&searchOption=${map.searchOption}&keyword=${map.keyword}">${row.title} 
+					<!-- ** 댓글이 있으면 게시글 이름 옆에 출력하기 -->
+					<c:if test="${row.recnt > 0}">
+					<span style="color: red;">(${row.recnt})
+					</span>
+					</c:if>
+				</a>
+			</td>
 			<td>${row.userName}</td>
 			<td>
 				<!-- 원하는 날짜형식으로 출력하기 위해 fmt태그 사용 -->
@@ -61,19 +69,19 @@
 		</c:forEach>
 		<tr>
 			<td colspan="5">
-				<!-- **처음페이지로 이동 : 현재 페이지가 1보다 크면  [처음]하이퍼링크를 화면에 출력-->
+				<!-- 처음페이지로 이동 : 현재 페이지가 1보다 크면  [처음]하이퍼링크를 화면에 출력-->
 				<c:if test="${map.boardPager.curBlock > 1}">
 					<a href="javascript:list('1')">[처음]</a>
 				</c:if>
 				
-				<!-- **이전페이지 블록으로 이동 : 현재 페이지 블럭이 1보다 크면 [이전]하이퍼링크를 화면에 출력 -->
+				<!-- 이전페이지 블록으로 이동 : 현재 페이지 블럭이 1보다 크면 [이전]하이퍼링크를 화면에 출력 -->
 				<c:if test="${map.boardPager.curBlock > 1}">
 					<a href="javascript:list('${map.boardPager.prevPage}')">[이전]</a>
 				</c:if>
 				
 				<!-- **하나의 블럭 시작페이지부터 끝페이지까지 반복문 실행 -->
 				<c:forEach var="num" begin="${map.boardPager.blockBegin}" end="${map.boardPager.blockEnd}">
-					<!-- **현재페이지이면 하이퍼링크 제거 -->
+					<!-- 현재페이지이면 하이퍼링크 제거 -->
 					<c:choose>
 						<c:when test="${num == map.boardPager.curPage}">
 							<span style="color: red">${num}</span>&nbsp;
@@ -84,12 +92,12 @@
 					</c:choose>
 				</c:forEach>
 				
-				<!-- **다음페이지 블록으로 이동 : 현재 페이지 블럭이 전체 페이지 블럭보다 작거나 같으면 [다음]하이퍼링크를 화면에 출력 -->
+				<!-- 다음페이지 블록으로 이동 : 현재 페이지 블럭이 전체 페이지 블럭보다 작거나 같으면 [다음]하이퍼링크를 화면에 출력 -->
 				<c:if test="${map.boardPager.curBlock <= map.boardPager.totBlock}">
 					<a href="javascript:list('${map.boardPager.nextPage}')">[다음]</a>
 				</c:if>
 				
-				<!-- **끝페이지로 이동 : 현재 페이지가 전체 페이지보다 작거나 같으면 [끝]하이퍼링크를 화면에 출력 -->
+				<!-- 끝페이지로 이동 : 현재 페이지가 전체 페이지보다 작거나 같으면 [끝]하이퍼링크를 화면에 출력 -->
 				<c:if test="${map.boardPager.curPage <= map.boardPager.totPage}">
 					<a href="javascript:list('${map.boardPager.totPage}')">[끝]</a>
 				</c:if>

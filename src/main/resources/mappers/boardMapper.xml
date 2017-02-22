@@ -17,7 +17,9 @@
 		
 		<!-- 03. 페이지 나누기 쿼리 -->
 		<include refid="pagingHeader"></include>
-			SELECT ROWNUM, bno, title, content, b.regdate, viewcnt, user_name as userName
+			SELECT ROWNUM, bno, title, content, b.regdate, viewcnt, user_name AS userName, 
+					<!-- **댓글숫자표시 -->
+					(SELECT COUNT(*) FROM tbl_reply WHERE bno=b.bno) AS recnt
 			FROM tbl_board b, tbl_member m
 			<include refid="search"></include>
 			ORDER BY bno DESC, b.regdate DESC 
