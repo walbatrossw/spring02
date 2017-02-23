@@ -8,17 +8,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 댓글 입력 -->
 	<insert id="insertReply">
-		INSERT INTO tbl_reply (rno, bno, replytext, replyer)
-		VALUES (reply_seq.NEXTVAL, #{bno}, #{replytext}, #{replyer})
+		INSERT INTO tbl_reply (rno, bno, replytext, replyer, secret_reply)
+		VALUES (reply_seq.NEXTVAL, #{bno}, #{replytext}, #{replyer}, #{secretReply})
 	</insert>
 	
 	<!-- 댓글 목록 -->
 	<select id="listReply" resultType="com.example.spring02.model.board.dto.ReplyVO">
-		SELECT rno, bno, replytext, replyer, user_name AS userName, r.regdate, r.updatedate
-		FROM tbl_reply r, tbl_member m
-		WHERE  r.replyer = m.user_id AND bno=#{bno}
-		ORDER BY rno
+		<include refid="pagingHeader"/>
+			<!-- SELECT rno, bno, replytext, replyer, user_name AS userName, r.regdate, r.updatedate
+			FROM tbl_reply r, tbl_member m
+			WHERE  r.replyer = m.user_id AND bno=#{bno}
+			ORDER BY rno -->
+			SELECT
+			  r.rno, bno, r.replytext, r.replyer, r.secret_reply AS secretReply, r.regdate, r.updatedate,
+			  m.user_name AS userName,
+			  (SELECT writer FROM tbl_board WHERE bno = r.bno) AS writer
+			FROM tbl_reply r, tbl_member m
+			WHERE
+			  r.replyer = m.user_id
+			  AND bno = #{bno}
+			ORDER BY rno
+		<include refid="pagingFooter"/>
 	</select>
+	
+	<!-- 댓글 갯수(페이징처리) -->
+	<select id="countReply" resultType="int">
+		SELECT COUNT(*) FROM tbl_reply WHERE bno=#{bno}
+	</select>
+	
+	<!-- 페이징 sql -->
+	<sql id="pagingHeader">
+		SELECT * FROM (
+			SELECT ROWNUM AS rn, A.* FROM (
+	</sql>
+	<sql id="pagingFooter">
+			) A
+		) WHERE rn BETWEEN #{start} AND #{end}
+	</sql>
 </mapper>
 
 

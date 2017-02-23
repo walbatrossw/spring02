@@ -8,11 +8,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.spring02.model.board.dto.ReplyVO;
+import com.example.spring02.service.board.ReplyPager;
 import com.example.spring02.service.board.ReplyService;
 
 // REST : Representational State Transfer
@@ -40,20 +40,32 @@ public class ReplyController {
 	}
 	// 댓글 목록(@Controller방식 : veiw(화면)를 리턴)
 	@RequestMapping("list.do")
-	public ModelAndView list(@RequestParam int bno, ModelAndView mav){
-		List<ReplyVO> list = replyService.list(bno);
+	public ModelAndView list(@RequestParam int bno,
+							@RequestParam(defaultValue="1") int curPage,
+							ModelAndView mav,
+							HttpSession session){
+		int count = replyService.count(bno); // 댓글 갯수
+		ReplyPager replyPager = new ReplyPager(count, curPage);
+		int start = replyPager.getPageBegin();
+		int end = replyPager.getPageEnd();
+		List<ReplyVO> list = replyService.list(bno, start, end, session);
 		// 뷰이름 지정
 		mav.setViewName("board/replyList");
 		// 뷰에 전달할 데이터 지정
 		mav.addObject("list", list);
+		mav.addObject("replyPager", replyPager);
 		// replyList.jsp로 포워딩
 		return mav;
 	}
 	// 댓글 목록(@RestController Json방식으로 처리 : 데이터를 리턴)
-	@RequestMapping("listJson.do")
+	/*@RequestMapping("listJson.do")
 	@ResponseBody // 리턴데이터를 json으로 변환(생략가능)
-	public List<ReplyVO> listJson(@RequestParam int bno){
-		List<ReplyVO> list = replyService.list(bno);
+	public List<ReplyVO> listJson(@RequestParam int bno, @RequestParam(defaultValue="1") int curPage){
+		int count = 10;
+		BoardPager pager = new BoardPager(count, curPage);
+		int start = pager.getPageBegin();
+		int end = pager.getPageEnd();
+		List<ReplyVO> list = replyService.list(bno, start, end);
 		return list;
-	}
+	}*/
 }
