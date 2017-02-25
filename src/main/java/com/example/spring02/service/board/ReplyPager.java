@@ -4,7 +4,7 @@ public class ReplyPager {
 	// 페이지당 게시물 수
 	public static final int PAGE_SCALE = 10;
 	// 화면당 페이지 수
-	public static final int BLOCK_SCALE = 5;
+	public static final int BLOCK_SCALE = 4;
 	private int curPage; // 현재 페이수
 	private int prevPage; // 이전 페이지
 	private int nextPage; // 다음 페이지
