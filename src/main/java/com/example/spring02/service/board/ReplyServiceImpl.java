@@ -15,8 +15,13 @@ public class ReplyServiceImpl implements ReplyService {
 	
 	@Inject
 	ReplyDAO replyDao;
-	
-	// 댓글 목록
+
+	// 1. 댓글 입력
+	@Override
+	public void create(ReplyVO vo) {
+		replyDao.create(vo);
+	}
+	// 2. 댓글 목록
 	@Override
 	public List<ReplyVO> list(Integer bno, int start, int end, HttpSession session) {
 		List<ReplyVO> items = replyDao.list(bno, start, end);
@@ -39,28 +44,24 @@ public class ReplyServiceImpl implements ReplyService {
 		}
 		return items; 
 	}
-	
-	// 댓글 작성
+	// 3. 댓글 상세보기
 	@Override
-	public void create(ReplyVO vo) {
-		replyDao.create(vo);
+	public ReplyVO detail(Integer rno) {
+		return replyDao.detail(rno);
 	}
-	// 댓글 수정
+	// 4. 댓글 수정
 	@Override
 	public void update(ReplyVO vo) {
-		// TODO Auto-generated method stub
-
+		replyDao.update(vo);
 	}
-	// 댓글 삭제
+	// 5. 댓글 삭제
 	@Override
 	public void delete(Integer rno) {
-		// TODO Auto-generated method stub
-
+		replyDao.delete(rno);
 	}
-	// 댓글 갯수
+	// 6. 댓글 갯수
 	@Override
-	public int count(int bno) {
+	public int count(Integer bno) {
 		return replyDao.count(bno);
 	}
-
 }
