@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.spring02.model.board.dto.BoardVO;
 import com.example.spring02.service.board.BoardPager;
 import com.example.spring02.service.board.BoardService;
+import com.example.spring02.service.board.ReplyService;
 
 
 
@@ -31,7 +32,8 @@ public class BoardController {
 	// IoC 의존관계 역전
 	@Inject
 	BoardService boardService;
-	
+	@Inject
+	ReplyService replyService;
 	
 	// 01. 게시글 목록
 	@RequestMapping("list.do")
@@ -88,11 +90,8 @@ public class BoardController {
 	// @RequestParam : get/post방식으로 전달된 변수 1개
 	// HttpSession 세션객체
 	@RequestMapping(value="view.do", method=RequestMethod.GET)
-	public ModelAndView view(@RequestParam int bno, 
-							@RequestParam int curPage, 
-							@RequestParam String searchOption,
-							@RequestParam String keyword,
-							HttpSession session) throws Exception{
+	public ModelAndView view(@RequestParam int bno, @RequestParam int curPage, @RequestParam String searchOption,
+							@RequestParam String keyword, HttpSession session) throws Exception{
 		// 조회수 증가 처리
 		boardService.increaseViewcnt(bno, session);
 		// 모델(데이터)+뷰(화면)를 함께 전달하는 객체
@@ -100,6 +99,8 @@ public class BoardController {
 		// 뷰의 이름
 		mav.setViewName("board/view");
 		// 뷰에 전달할 데이터
+		// 댓글의 수 : 댓글이 존재하는 게시물의 삭제처리 방지하기 위해
+		mav.addObject("count", replyService.count(bno)); 
 		mav.addObject("dto", boardService.read(bno));
 		mav.addObject("curPage", curPage);
 		mav.addObject("searchOption", searchOption);
