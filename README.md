@@ -25,56 +25,6 @@
 ***
 	
 ### 11th Commit : Spring - 게시판 만들기 연습(AOP 저장 로그 구현)
-##### AOP(Aspect Oriented Programming, 관점 지향 프로그래밍)
-
-AOP는 Ioc/DI, 서비스 추상화와 더불어 스프링의 3대 기반기술 중에 하나이다. AOP는 스프링의 기술중에서 가장 이해하기 힘든 난해한 용어와 개념을 가진 기술로 악명이 높다. AOP를 바르게 이용하려면 OOP를 대체하려고 하는 것 처럼 보이는 AOP라는 이름 뒤에 감춰진, 그 필연적인 등장배경과 스프링이 도입한 이유, 그 적용을 통해 얻을 수 있는 장점이 무엇인지에 대한 충분한 이해가 필요하다.
-
-##### AOP는 OOP(Object Oriented Programming, 객체지향프로그래밍)를 보완하는 확정적인 개념
-
-> AOP란 OOP를 대신하는 새로운 개념이 아니라, OOP를 더욱 OOP답게 사용할 수 있도록 도와주는 개념이다.
-
-![aop](http://cfile2.uf.tistory.com/image/2218DF4358B6958D0DE1B6)
-------
-##### AOP 주요 용어와 개념
-1. Aspect
-	* 구현하고자 하는 횡단 관심사(로깅, 트랜잭션, 권한 등)의 기능을 의미한다.
-	* 한개 이상의 포인트컷과 어드바이스의 조합으로 만들어진다.
-2. Join Points
-	* 관점(Aspect)를 삽입하여 어드바이스가 적용될 수 있는 위치를 의미한다.
-	* method를 호출하는 시점, 예외가 발생하는 시점 등과 같이 특정 작업이 실행되는 시점을 의미하기도 한다.
-3. Advice 
-	* 관점(Aspect)의 구현체로 Join Points에서 실행되어야 하는 코드(실제로 AOP 기능을 구현한 객체)
-	* Advice는 Join Point와 결합하여 동작하는 시점에 따라 5개로 구분된다.
-    	* Advice의 종류
-		- Before Advice : Join Points 전에 실행되는 advice
-		- After returning advice : Join Points에서 성공적으로 리턴 된 후 실행되는 advice
-		- After throwing advice : 예외가 발생하였을 경우 실행되는 advice
-		- After advice : Join Points에서 메서드의 실행결과에 상관없이 무조건 실행되는 advice, 자바의 finally와 비슷한 역할
-		- Around advice : Join Points의 전 과정(전, 후)에 수행되는 advice(가장 광범위하게 사용)
-4. Pointcuts
-	* 어드바이스를 적용할 조인 포인트를 선별하는 과정이나 그 기능을 정의한 모듈을 의미한다. 패턴매칭을 이용하여 어떤 조인포인트를 사용할 것인지 결정한다.
-5. Target
-	* 어드바이스를 받을 대상, 즉 객체를 의미한다. 비지니스로직을 수행하는 클래스일수도 있지만, 프록시 객체(Object)가 될 수도 있다.
-
-------
-##### AOP의 설정 방법 (로깅 저장 예제)
-
-* `pom.xml` 에  라이브러리 추가
-	```xml
-	<dependency>
-		<groupId>org.aspectj</groupId>
-		<artifactId>aspectjweaver</artifactId>
-		<version>1.8.9</version>
-	</dependency>
-	```
-
-* `servlet-context.xml`의 Namespace에 aop 추가
-	![servlet-context.xml](http://cfile2.uf.tistory.com/image/2113093F58B69E0D2F9267)
-
-* `servlet-context.xml`에 aop 태그 추가
-	```xml
-	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
-	```
 ### AOP(Aspect Oriented Programming, 관점 지향 프로그래밍)
 
 AOP는 Ioc/DI, 서비스 추상화와 더불어 스프링의 3대 기반기술 중에 하나이다. AOP는 스프링의 기술중에서 가장 이해하기 힘든 난해한 용어와 개념을 가진 기술로 악명이 높다. AOP를 바르게 이용하려면 OOP를 대체하려고 하는 것 처럼 보이는 AOP라는 이름 뒤에 감춰진, 그 필연적인 등장배경과 스프링이 도입한 이유, 그 적용을 통해 얻을 수 있는 장점이 무엇인지에 대한 충분한 이해가 필요하다.
