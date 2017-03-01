@@ -3,8 +3,8 @@
 
 ---
 
-## 10th Commit : Spring - 게시판 만들기 연습 (게시물 삭제를 delete대신 update처리)
-### 소스코드 변경사항
+### 10th Commit : Spring - 게시판 만들기 연습 (게시물 삭제를 delete대신 update처리)
+##### 소스코드 변경사항
 1. Model(DB연동 작업처리)
     * BoardVO에서 show추가
     * BoardMapper.xml 변경
