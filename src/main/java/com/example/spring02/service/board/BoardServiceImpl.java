@@ -28,7 +28,7 @@ public class BoardServiceImpl implements BoardService {
 		title = title.replace("<", "&gt;");
 		writer = writer.replace("<", "&lt;");
 		writer = writer.replace("<", "&gt;");
-		// *공백문자 처리
+		// *공백문자 처리 
 		title = title.replace("  ",	"&nbsp;&nbsp;");
 		writer = writer.replace("  ",	"&nbsp;&nbsp;");
 		// *줄바꿈 문자처리
