@@ -46,7 +46,11 @@
 			<th>작성일</th>
 			<th>조회수</th>
 		</tr>
-		<c:forEach var="row" items="${map.list}">
+	
+	<c:forEach var="row" items="${map.list}">
+		<c:choose>
+			<c:when test="${row.show == 'y'}">
+		<!-- show 컬럼이 y일때(삭제X 글) -->
 		<tr>
 			<td>${row.bno}</td>
 			<!-- 게시글 상세보기 페이지로 이동시 게시글 목록페이지에 있는 검색조건, 키워드, 현재페이지 값을 유지하기 위해 -->
@@ -54,8 +58,8 @@
 				<a href="${path}/board/view.do?bno=${row.bno}&curPage=${map.boardPager.curPage}&searchOption=${map.searchOption}&keyword=${map.keyword}">${row.title} 
 					<!-- ** 댓글이 있으면 게시글 이름 옆에 출력하기 -->
 					<c:if test="${row.recnt > 0}">
-					<span style="color: red;">(${row.recnt})
-					</span>
+						<span style="color: red;">(${row.recnt})
+						</span>
 					</c:if>
 				</a>
 			</td>
@@ -65,8 +69,29 @@
 				<fmt:formatDate value="${row.regdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 			</td>
 			<td>${row.viewcnt}</td>
-		</tr>	
-		</c:forEach>
+		</tr>
+			</c:when>
+			<c:otherwise>
+		<!-- show 컬럼이 n일때(삭제된 글) -->
+		<tr>
+			<td colspan="5" align="left">
+				<c:if test="${row.recnt > 0}">
+					<a href="${path}/board/view.do?bno=${row.bno}&curPage=${map.boardPager.curPage}&searchOption=${map.searchOption}&keyword=${map.keyword}">삭제된 게시물입니다.
+					<!-- ** 댓글이 있으면 게시글 이름 옆에 출력하기 -->
+						<span style="color: red;">(${row.recnt})
+						</span>
+					</a>
+				</c:if>
+				<c:if test="${row.recnt == 0 }">
+					삭제된 게시물입니다.
+				</c:if>	
+			</td>
+		</tr>
+			</c:otherwise>
+		</c:choose>
+	</c:forEach>
+		
+		<!-- 페이징 -->
 		<tr>
 			<td colspan="5">
 				<!-- 처음페이지로 이동 : 현재 페이지가 1보다 크면  [처음]하이퍼링크를 화면에 출력-->
@@ -103,6 +128,7 @@
 				</c:if>
 			</td>
 		</tr>
+		<!-- 페이징 -->
 </table>
 </body>
 </html>

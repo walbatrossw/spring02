@@ -15,21 +15,27 @@
 		<!-- <include refid="search"></include>
 		ORDER BY bno desc, regdate desc -->
 		
-		<!-- 03. 페이지 나누기 쿼리 -->
+		<!-- 03. 페이지 나누기를 포함한 게시글 목록 -->
+		<!-- 페이징 -->
 		<include refid="pagingHeader"></include>
-			SELECT ROWNUM, bno, title, content, b.regdate, viewcnt, user_name AS userName, 
-					<!-- **댓글숫자표시 -->
-					(SELECT COUNT(*) FROM tbl_reply WHERE bno=b.bno) AS recnt
-			FROM tbl_board b, tbl_member m
+			SELECT 
+				ROWNUM, bno, title, content, b.regdate, viewcnt, user_name AS userName, show, 
+				<!-- **댓글숫자표시 -->
+				(SELECT COUNT(*) FROM tbl_reply WHERE bno=b.bno) AS recnt
+			FROM 
+				tbl_board b, tbl_member m
+			<!-- 검색조건 -->
 			<include refid="search"></include>
 			ORDER BY bno DESC, b.regdate DESC 
+		<!-- 페이징 -->
 		<include refid="pagingFooter"></include>	
 		
 	</select>
 	<!-- 01_02. 게시글 레코드 갯수 -->
 	<select id="countArticle" resultType="int">
 		SELECT COUNT(*) 
-		FROM tbl_board b, tbl_member m
+		FROM 
+			tbl_board b, tbl_member m
 		<!-- WHERE절을 include 태그로 삽입 -->
 		<include refid="search"></include>
 	</select>
@@ -37,43 +43,63 @@
 	<!-- 02. 게시글 작성 -->
 	<insert id="insert">
 		INSERT INTO tbl_board (
-		  bno, 
-		  title, 
-		  content, 
-		  writer
+		  bno, title, content, writer, show
 		) VALUES (
-		  (SELECT NVL(MAX(bno)+1, 1)FROM tbl_board),
-		  #{title},
-		  #{content},
-		  #{writer}
+		  (SELECT NVL(MAX(bno)+1, 1)FROM tbl_board), #{title}, #{content}, #{writer}, 'y'
 		)
 	</insert>
+	
 	<!--03. 게시글 상세보기 조회 -->
 	<select id="view" resultType="com.example.spring02.model.board.dto.BoardVO">
 		<!-- SELECT * FROM tbl_board  -->
-		SELECT bno, title, content, b.regdate, writer, viewcnt, user_name AS userName 
-		FROM tbl_board b, tbl_member m
-		WHERE b.writer = m.user_id 
-		AND bno = #{bno}
+		SELECT 
+			bno, title, content, b.regdate, writer, viewcnt, user_name AS userName, show
+		FROM 
+			tbl_board b, tbl_member m
+		WHERE 
+			b.writer = m.user_id 
+		AND 
+			bno = #{bno}
 	</select>
+	
 	<!-- 04. 게시글 조회수 증가처리 -->
 	<update id="increaseViewcnt">
-		UPDATE tbl_board SET viewcnt = viewcnt + 1 
-		WHERE bno = #{bno}
+		UPDATE 
+			tbl_board 
+		SET 
+			viewcnt = viewcnt + 1 
+		WHERE 
+			bno = #{bno}
 	</update>
+	
 	<!-- 05. 게시글 수정처리 -->
 	<update id="updateArticle">
-		UPDATE tbl_board SET
+		UPDATE 
+			tbl_board 
+		SET
 			title = #{title},
 			content = #{content}
 			<!-- writer = #{writer} -->
-		WHERE bno = #{bno}
+		WHERE 
+			bno = #{bno}
 	</update>
+	
 	<!-- 06. 게시글 삭제처리 -->
-	<delete id="deleteArticle">
+	<!-- 게시물을 삭제처리하지 않고, 삭제의 유무 상태만 변경 -->
+	<update id="deleteArticle">
+		UPDATE 
+			tbl_board
+		SET 
+			show = 'n'
+		WHERE 
+			bno = #{bno}
+	</update>
+	<!-- <delete id="deleteArticle">
 		DELETE FROM tbl_board
 		WHERE bno = #{bno}
-	</delete>
+	</delete> -->
+	
+	
 	
 	<!-- sql code 조각 -->
 	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 빼둘수 있다. -->
@@ -82,16 +108,21 @@
 		<choose>
 			<!-- 검색옵션이 전체 검색일 경우 -->
 			<when test="searchOption == 'all'">
-				WHERE b.writer = m.user_id
+				WHERE 
+					b.writer = m.user_id
 				AND	
-				(user_name like '%'||#{keyword}||'%'
-				OR content like '%'||#{keyword}||'%'
-				OR title like '%'||#{keyword}||'%')
+					(user_name like '%'||#{keyword}||'%'
+				OR 
+					content like '%'||#{keyword}||'%'
+				OR 
+					title like '%'||#{keyword}||'%')
 			</when>
 			<!-- 전체 검색이 아닐 경우 -->
 			<otherwise>
-				WHERE b.writer = m.user_id 
-				AND ${searchOption} like '%'||#{keyword}||'%'
+				WHERE 
+					b.writer = m.user_id 
+				AND 
+					${searchOption} like '%'||#{keyword}||'%'
 			</otherwise>
 		</choose>
 	</sql>

@@ -10,8 +10,9 @@ public class BoardVO {
 	private String userName;	// 게시글 작성자의 이름(회원이름)
 	private Date regdate;		// 게시글 작성일자 util.Date
 	private int viewcnt;		// 게시글 조회수
-	private int recnt;			// **게시글 댓글의 수 추가
-
+	private int recnt;			// 게시글 댓글의 수 
+	private String show;		// 게시글 삭제 상태 유무(y, n)
+	
 	// Getter/Setter
 	public int getBno() {
 		return bno;
@@ -76,11 +77,21 @@ public class BoardVO {
 	public void setRecnt(int recnt) {
 		this.recnt = recnt;
 	}
+	
+	public String getShow() {
+		return show;
+	}
+	
+	public void setShow(String show) {
+		this.show = show;
+	}
+	
 	// toString()
 	@Override
 	public String toString() {
 		return "BoardVO [bno=" + bno + ", title=" + title + ", content=" + content + ", writer=" + writer
-				+ ", userName=" + userName + ", regdate=" + regdate + ", viewcnt=" + viewcnt + ", recnt=" + recnt + "]";
+				+ ", userName=" + userName + ", regdate=" + regdate + ", viewcnt=" + viewcnt + ", recnt=" + recnt
+				+ ", show=" + show + "]";
 	}
-		
+	
 }
