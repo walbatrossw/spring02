@@ -60,68 +60,67 @@ AOP는 Ioc/DI, 서비스 추상화와 더불어 스프링의 3대 기반기술 �
 ##### AOP의 설정 방법 (로깅 저장 예제)
 
 * `pom.xml` 에  라이브러리 추가
-```xml
-<dependency>
-    <groupId>org.aspectj</groupId>
-    <artifactId>aspectjweaver</artifactId>
-    <version>1.8.9</version>
-</dependency>
-```
+	```xml
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+		<version>1.8.9</version>
+	</dependency>
+	```
 
 * `servlet-context.xml`의 Namespace에 aop 추가
-![servlet-context.xml](http://cfile2.uf.tistory.com/image/2113093F58B69E0D2F9267)
+	![servlet-context.xml](http://cfile2.uf.tistory.com/image/2113093F58B69E0D2F9267)
 
 * `servlet-context.xml`에 aop 태그 추가
-```xml
-<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
-```
+	```xml
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	```
 * AOP 기능을 지원할 Advice 클래스 작성
-```java
-@Component // 스프링에서 관리하는 bean
-@Aspect // AOP bean
-public class LogAdvice {
-	
-    // private : 외부에서 로그를 가로채지 못하도록 하기 위해
-	// static final : 로그 내용이 바뀌지 않으므로
-	// 로깅툴을 사용하는 이유 : sysout명령어는 IO리소스를 많이 사용하여 시스템이 느려질 수 있다, 로그를 파일로 저장하여 분석할 필요가 있다.
-    private static final Logger logger = LoggerFactory.getLogger(LogAdvice.class);
-	
-    // PointCut - 실행 시점
-	// @Before, @After, @Around
-	// 컨트롤러, 서비스, DAO의 모든 method를 실행 전후에 logPrint method가 자동으로 실행된다.
-	// .. : 하위의 모든 디렉토리를 의미
-	// *(..) : * - 하위의 모든 메서드, (..) - 모든 매개변수
-    @Around("execution(* com.example.spring02.controller..*Controller.*(..))"
+	```java
+	@Component // 스프링에서 관리하는 bean
+	@Aspect // AOP bean
+	public class LogAdvice {
+		// private : 외부에서 로그를 가로채지 못하도록 하기 위해
+		// static final : 로그 내용이 바뀌지 않으므로
+		// 로깅툴을 사용하는 이유 : sysout명령어는 IO리소스를 많이 사용하여 시스템이 느려질 수 있다, 로그를 파일로 저장하여 분석할 필요가 있다.
+		private static final Logger logger = LoggerFactory.getLogger(LogAdvice.class);
+		// PointCut - 실행 시점
+		// @Before, @After, @Around
+		// 컨트롤러, 서비스, DAO의 모든 method를 실행 전후에 logPrint method가 자동으로 실행된다.
+		// .. : 하위의 모든 디렉토리를 의미
+		// *(..) : * - 하위의 모든 메서드, (..) - 모든 매개변수
+		@Around("execution(* com.example.spring02.controller..*Controller.*(..))"
 			+ " or execution(* com.example.spring02.service..*Impl.*(..))"
 			+ " or execution(* com.example.spring02.model..dao.*Impl.*(..))")
-	public Object logPrinnt(ProceedingJoinPoint joinPoint) throws Throwable{
-		// 실행 시간 체크 : 시작시간
-		long start = System.currentTimeMillis();
-		// 핵심로직으로 이동
-		Object result = joinPoint.proceed();
-		// 클래스 이름
-		String type = joinPoint.getSignature().getDeclaringTypeName();
-		String name = "";
-		if (type.indexOf("Controller") > -1) {
-			name = "Controller:";
-		} else if (type.indexOf("Service") > -1) {
-			name = "ServiceImpl:";
-		} else if (type.indexOf("DAO") > -1) {
-			name = "DAO:";
+		public Object logPrinnt(ProceedingJoinPoint joinPoint) throws Throwable{
+			// 실행 시간 체크 : 시작시간
+			long start = System.currentTimeMillis();
+			// 핵심로직으로 이동
+			Object result = joinPoint.proceed();
+			// 클래스 이름
+			String type = joinPoint.getSignature().getDeclaringTypeName();
+			String name = "";
+			if (type.indexOf("Controller") > -1) {
+				name = "Controller:";
+			} else if (type.indexOf("Service") > -1) {
+				name = "ServiceImpl:";
+			} else if (type.indexOf("DAO") > -1) {
+				name = "DAO:";
+			}
+			// 메서드 이름
+			logger.info(name+type+"."+joinPoint.getSignature().getName()+"()");
+			// 파라미터 이름
+			logger.info(Arrays.toString(joinPoint.getArgs()));
+			// 실행 시간 체크 : 종료시간
+			long end = System.currentTimeMillis();
+			// 실행 시간 체크 : 연산
+			long time = end-start;
+			logger.info("실행 시간:"+time);
+			return result;
 		}
-		// 메서드 이름
-		logger.info(name+type+"."+joinPoint.getSignature().getName()+"()");
-		// 파라미터 이름
-		logger.info(Arrays.toString(joinPoint.getArgs()));
-		// 실행 시간 체크 : 종료시간
-		long end = System.currentTimeMillis();
-		// 실행 시간 체크 : 연산
-		long time = end-start;
-		logger.info("실행 시간:"+time);
-		return result;
 	}
-}
-```
+	```
+
 ------
 ##### 요약
 
