@@ -32,6 +32,6 @@
 	<!-- 스프링에서 AOP의 설정을 통한 Proxy(Advice가 적용되었을 때 생성)객체 생성 -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	<!-- 스프링 빈을 태그로 등록하지 않고 자동으로 검색(auto scan) --> 
-	<context:component-scan base-package="com.example.spring02.*"/>
+	<context:component-scan base-package="com.example.spring02"/>
 	
 </beans:beans>

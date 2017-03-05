@@ -34,10 +34,13 @@ public class LogAdvice {
 		// 클래스 이름
 		String type = joinPoint.getSignature().getDeclaringTypeName();
 		String name = "";
+		// Controller라면
 		if (type.indexOf("Controller") > -1) {
 			name = "Controller:";
+		// Service라면
 		} else if (type.indexOf("Service") > -1) {
 			name = "ServiceImpl:";
+		// DAO라면
 		} else if (type.indexOf("DAO") > -1) {
 			name = "DAO:";
 		}

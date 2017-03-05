@@ -1,0 +1,16 @@
+* AOP실습
+사용자가 메시지를 남기면 포인트 10 증가
+메시즈를 읽으면 포인트 5증가
+
+* 패키지, 인터페이스, 클래스명
+com.example.spring02.controller.message
+									MessageController
+com.example.spring02.model.message.dto
+									UserVO
+									MessageVO
+com.example.spring02.model.message.dao
+									MessageDAO
+									MessageDAOImpl
+com.example.spring02.service.message
+									MessageService
+									MessageServiceImpl
