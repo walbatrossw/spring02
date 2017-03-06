@@ -28,10 +28,22 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
+	
 	<!-- namespace에서 추가시킨 뒤 AOP관련 bean추가  -->
 	<!-- 스프링에서 AOP의 설정을 통한 Proxy(Advice가 적용되었을 때 생성)객체 생성 -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
 	<!-- 스프링 빈을 태그로 등록하지 않고 자동으로 검색(auto scan) --> 
 	<context:component-scan base-package="com.example.spring02"/>
 	
+	<!-- 파일업로드에 필요한 bean -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10485760"/>
+	</beans:bean>
+	<!-- 파일업로드를 위한 디렉토리 설정 -->
+	<!-- String uploadPath = new String("업로드 경로") -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<!-- constructor-arg : 생성자 매개변수 -->
+		<beans:constructor-arg value="C:\\Users\\doubles\\Desktop\\workspace\\gitSpring\\spring02\\src\\main\\resources\\upload"/>
+	</beans:bean>
 </beans:beans>

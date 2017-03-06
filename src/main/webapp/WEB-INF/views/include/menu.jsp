@@ -2,6 +2,7 @@
 <!-- jstl 코어 태그 -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <a href="${path}/board/list.do">게시판</a>
+<a href="${path}/upload/uploadForm">업로드테스트</a>
 <c:choose>
 	<c:when test="${sessionScope.userId == null}">
 		<a href="${path}/member/login.do">로그인</a>
