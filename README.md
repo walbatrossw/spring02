@@ -61,3 +61,6 @@
 
 ## 3. 업로드 결과를 iframe에 출력
 [해당 포스트 링크](http://doublesprogramming.tistory.com/129)
+
+## 4. AJAX방식(파일 저장 디렉토리, 썸네일 이미지 생성)
+[해당 포스트 링크](http://doublesprogramming.tistory.com/130)
