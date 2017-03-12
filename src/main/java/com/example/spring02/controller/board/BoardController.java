@@ -11,9 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.spring02.model.board.dto.BoardVO;
@@ -123,4 +126,15 @@ public class BoardController {
 		boardService.delete(bno);
 		return "redirect:list.do";
 	}
+	
+	// 06. 게시글 첨부파일 목록
+	// http://loacalhost/spring02/board/getAttach/1
+	// @PathVariable : parameter가 아닌 url에 포함된 변수
+	// @RequestParam : parameter변수
+	@RequestMapping("/getAttach/{bno}")
+	@ResponseBody // view가 아닌 data를 리턴
+	public List<String> getAttach(@PathVariable("bno") int bno){
+		return boardService.getAttach(bno);
+	}
+	 
 }

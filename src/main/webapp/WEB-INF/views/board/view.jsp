@@ -5,9 +5,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>게시글 작성</title>
 <%@ include file="../include/header.jsp" %>
+<script type="text/javascript" src="${path}/include/js/common.js"></script>
 <script>
 	$(document).ready(function(){
-		/* 게시글 관련 */
+		
+		/* --------------- 게시글 관련 --------------- */
 		// 1. 게시글 수정
 		$("#btnUpdete").click(function(){
 			/* var title = document.form1.title.value; ==> name속성으로 처리할 경우
@@ -32,6 +34,20 @@
 				return;
 			} */
 			document.form1.action="${path}/board/update.do"
+			
+			// 첨부파일 이름을 form에 추가
+			var that = $("#form1");
+			var str = "";
+			// 태그들.each(함수)
+			// id가 uploadedList인 태그 내부에 있는 hidden태그들
+			$("#uploadedList .file").each(function(i){
+				str += "<input type='hidden' name='files["+i+"]' value='"+$(this).val()+"'>";
+			});
+			// form에 hidden태그들을 추가
+			$("#form1").append(str);
+			// 폼에 입력한 데이터를 서버로 전송
+			document.form1.submit();
+			
 			// 폼에 입력한 데이터를 서버로 전송
 			document.form1.submit();
 		});
@@ -55,7 +71,60 @@
 			location.href="${path}/board/list.do?curPage=${curPage}&searchOption=${searchOption}&keyword=${keyword}";
 		});
 		
-		/* 댓글 관련 */
+		// 4. 첨부파일 목록 불러오기
+		listAttach();
+		
+		// 5. 첨부파일 삭제 처리
+		// 태그.on("이벤트", "자손태그", 이벤트 핸들러)
+		$("#uploadedList").on("click", ".fileDel", function(e){
+			var that = $(this); // 클릭한 a태그
+			$.ajax({
+				type: "post",
+				url: "${path}/upload/deleteFile",
+				data: {fileName: $(this).attr("data-src")},
+				dataType: "text",
+				success: function(result){
+					if(result == "deleted"){
+						that.parent("div").remove();
+					}
+				}
+				
+			});
+		});
+		
+		// 6. 파일 업로드 드래그
+		$("#fileDrop").on("dragenter dragover", function(e){
+			e.preventDefault(); // 기본효과 제한
+		});
+		$("#fileDrop").on("drop", function(e){
+			e.preventDefault(); // 기본효과 제한
+			var files = e.originalEvent.dataTransfer.files; // 드래그한 파일들
+			//console.log(files);
+			var file = files[0]; // 첫번째 첨부파일
+			var formData = new FormData(); // 폼데이터 객체
+			formData.append("file", file); // 첨부파일 추가
+			$.ajax({
+				url: "${path}/upload/uploadAjax",
+				type: "post",
+				data: formData,
+				dataType: "text",
+				processData: false, // processType: false - header가 아닌 body로 전달
+				contentType: false,
+				success: function(data){
+					console.log(data);
+					// 첨부 파일의 정보
+					var fileInfo = getFileInfo(data);
+					// 하이퍼링크
+					var html = "<a href='"+fileInfo.getLink+"'>"+fileInfo.fileName+"</a><br>";
+					// hidden 태그 추가
+					html += "<input type='hidden' class='file' value='"+fileInfo.fullName+"'>";
+					// div에 추가
+					$("#uploadedList").append(html);
+				}
+			});
+		});
+		
+		/* --------------- 댓글 관련 -------------- */
 		// 1. 댓글 입력
 		$("#btnReply").click(function(){
 			//reply(); // 폼데이터 형식으로 입력
@@ -67,7 +136,31 @@
 		//listReply2(); // json 리턴방식
 		listReplyRest("1"); // rest방식
 		
+		
 	});
+	
+	/* --------------- 게시글 관련 -------------- */
+	
+	// 첨부파일 목록
+	// $(객체) $("태그") $("#id") $(".class")
+	function listAttach(){
+		$.ajax({
+			type: "post",
+			url: "${path}/board/getAttach/${dto.bno}",
+			success: function(list){
+				$(list).each(function(){
+				// each문 내부의 this : 각 step에 해당되는 값을 의미	
+				var fileInfo = getFileInfo(this);
+				var html = "<div><a href='"+fileInfo.getLink+"'>"+fileInfo.fileName+"</a>&nbsp;&nbsp;";
+				// href="#" null link, 하이퍼링크로 이동하지 않는다.
+				html += "<a href='#' class='fileDel' data-src='"+this+"'>[삭제]</a></div>"
+				$("#uploadedList").append(html);
+				});
+			}
+		});
+	}
+	
+	/* --------------- 댓글 관련 -------------- */
 	
 	// 1_1. 댓글 입력 함수(폼 데이터 방식)
 	function reply(){
@@ -125,6 +218,7 @@
 			}
 		});
 	}
+	
 	// 2_1. 댓글 목록 - 전통적인 Controller방식
 	function listReply(num){
 		$.ajax({
@@ -136,6 +230,7 @@
 			}
 		});
 	}
+	
 	// 2_2. 댓글 목록 - RestController를 이용 json형식으로 리턴
 	function listReply2(){
 		$.ajax({
@@ -204,6 +299,12 @@
 		z-index: 10;
 		visibility: hidden;
 	}
+	#fileDrop {
+		width: 600px;
+		height: 80px;
+		border: 1px solid gray;
+		background-color: gray;
+	}
 </style>
 </head>
 <body>
@@ -213,7 +314,7 @@
 		<c:when test="${dto.show == 'y'}">
 		<!-- show가 y면 -->	
 			<!-- 게시물 상세보기 영역 -->
-			<form name="form1" method="post">
+			<form name="form1" id="form1" method="post">
 				<div>		<!-- 원하는 날짜형식으로 출력하기 위해 fmt태그 사용 -->
 					작성일자 : <fmt:formatDate value="${dto.regdate}" pattern="yyyy-MM-dd a HH:mm:ss"/>
 							<!-- 날짜 형식 => yyyy 4자리연도, MM 월, dd 일, a 오전/오후, HH 24시간제, hh 12시간제, mm 분, ss 초 -->
@@ -233,6 +334,15 @@
 					이름
 					<%-- <input name="writer" id="writer" value="${dto.writer}" placeholder="이름을 입력해주세요"> --%>
 					${dto.userName}
+				</div>
+				<!-- 첨부파일 목록 -->
+				<div>
+					첨부파일 
+					<div id="uploadedList"></div>
+				</div>
+				<!-- 첨부파일을 드래그할 영역 -->
+				<div>
+					<div id="fileDrop"></div>
 				</div>
 				<div style="width:650px; text-align: center;">
 					<!-- 게시물번호를 hidden으로 처리 -->

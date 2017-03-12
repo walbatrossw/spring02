@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
+
+	<!-- ******************** 게시글 관련 ********************** -->
+
 	<!-- 01. 게시글 전체 목록 조회 및 검색조회까지 -->
 	<select id="listAll" resultType="com.example.spring02.model.board.dto.BoardVO">
 		
@@ -29,9 +32,9 @@
 			ORDER BY bno DESC, b.regdate DESC 
 		<!-- 페이징 -->
 		<include refid="pagingFooter"></include>	
-		
 	</select>
-	<!-- 01_02. 게시글 레코드 갯수 -->
+	
+	<!-- 02_02. 게시글 레코드 갯수 -->
 	<select id="countArticle" resultType="int">
 		SELECT COUNT(*) 
 		FROM 
@@ -40,13 +43,20 @@
 		<include refid="search"></include>
 	</select>
 	
-	<!-- 02. 게시글 작성 -->
+	<!-- 02_01. 게시글 작성 -->
 	<insert id="insert">
+		<!-- 게시글 번호를 시퀀스로 생성 -->
 		INSERT INTO tbl_board (
 		  bno, title, content, writer, show
 		) VALUES (
-		  (SELECT NVL(MAX(bno)+1, 1)FROM tbl_board), #{title}, #{content}, #{writer}, 'y'
+		  seq_board.NEXTVAL, #{title}, #{content}, #{writer}, 'y'
 		)
+		<!-- 게시글 번호를 서브쿼리로 생성 -->
+		<!-- INSERT INTO tbl_board (
+		  bno, title, content, writer, show
+		) VALUES (
+		  (SELECT NVL(MAX(bno)+1, 1)FROM tbl_board), #{title}, #{content}, #{writer}, 'y'
+		) -->
 	</insert>
 	
 	<!--03. 게시글 상세보기 조회 -->
@@ -98,9 +108,6 @@
 		DELETE FROM tbl_board
 		WHERE bno = #{bno}
 	</delete> -->
-	
-	
-	
 	<!-- sql code 조각 -->
 	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 빼둘수 있다. -->
 	<!-- 검색 조건 sql -->
@@ -136,4 +143,37 @@
 			) A
 		) WHERE rn BETWEEN #{start} AND #{end}
 	</sql>
+	
+	
+	<!-- ******************** 게시글 첨부파일 관련 ********************** -->
+	
+	<!-- 01. 게시물의 첨부파일 목록 -->
+	<select id="getAttach" resultType="String">
+		SELECT fullname FROM tbl_attach WHERE bno = #{bno} ORDER BY regdate
+	</select>
+	
+	<!-- 02. 게시물 첨부파일 추가 -->
+	<insert id="addAttach">
+		<!-- CURRVAL : 현재의 값 -->
+		INSERT INTO tbl_attach (
+			fullname, bno
+		) VALUES (
+			#{fullName}, seq_board.CURRVAL
+		)
+	</insert>
+	
+	<!-- 03. 게시글의 첨부파일 업데이트처리(입력처리) -->
+	<insert id="updateAttach">
+		INSERT INTO tbl_attach (
+			fullname, bno
+		) VALUES (
+			#{fullName}, #{bno}
+		)
+	</insert>
+	
+	<!-- 03. 게시글의 첨부파일 삭제처리 -->
+	<delete id="deleteAttach">
+		DELETE FROM tbl_attach WHERE fullname = #{fullname}
+	</delete>
+	
 </mapper>

@@ -19,4 +19,12 @@ public interface BoardDAO {
 	public void increaseViewcnt(int bno) throws Exception;
 	// 07. 게시글 레코드 갯수 메서드 추가
 	public int countArticle(String searchOption, String keyword) throws Exception;
+	// 08. 게시물 첨부파일 추가
+	public void addAttach(String fullName);
+	// 09. 게시물 첨부파일 목록
+	public List<String> getAttach(int bno);
+	// 10. 게시글 첨부파일 삭제처리
+	public void deleteFile(String fullname);
+	// 11. 게시글 첨부파일 업데이트처리
+	public void updateAttach(String fullName, int bno);
 }

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.spring02.model.board.dao.BoardDAO;
 import com.example.spring02.model.board.dto.BoardVO;
@@ -17,6 +18,7 @@ public class BoardServiceImpl implements BoardService {
 	BoardDAO boardDao;
 	
 	// 01. 게시글쓰기
+	@Transactional // 트랜잭션 처리 메서드로 설정
 	@Override
 	public void create(BoardVO vo) throws Exception {
 		String title = vo.getTitle();
@@ -36,7 +38,16 @@ public class BoardServiceImpl implements BoardService {
 		vo.setTitle(title);
 		vo.setContent(content);
 		vo.setWriter(writer);
+		// 게시물 등록
 		boardDao.create(vo);
+		// 게시물의 첨부파일 정보 등록
+		String[] files = vo.getFiles(); // 첨부파일 배열
+		if(files == null) return; // 첨부파일이 없으면 메서드 종료
+		// 첨부파일들의 정보를 tbl_attach 테이블에 insert
+		for(String name : files){ 
+			boardDao.addAttach(name);
+		}
+		
 	}
 	// 02. 게시글 상세보기
 	@Override
@@ -44,9 +55,18 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.read(bno);
 	}
 	// 03. 게시글 수정
+	@Transactional
 	@Override
 	public void update(BoardVO vo) throws Exception {
 		boardDao.update(vo);
+		// 첨부파일 정보 등록
+		String[] files = vo.getFiles(); // 첨부파일 배열
+		// 첨부파일이 없으면 종료
+		if(files == null) return;
+		// 첨부파일들의 정보를 tbl_attach 테이블에 insert
+		for(String name : files){
+			boardDao.updateAttach(name, vo.getBno());
+		}
 	}
 	// 04. 게시글 삭제
 	@Override
@@ -84,6 +104,16 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int countArticle(String searchOption, String keyword) throws Exception {
 		return boardDao.countArticle(searchOption, keyword);
+	}
+	
+	// 08. 게시글의 첨부파일 목록
+	@Override
+	public List<String> getAttach(int bno) {
+		return boardDao.getAttach(bno);
+	}
+	@Override
+	public void deleteFile(String fullname) {
+		boardDao.deleteFile(fullname);
 	}
 
 }

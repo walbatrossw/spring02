@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.spring02.service.board.BoardService;
 import com.example.spring02.util.MediaUtils;
 import com.example.spring02.util.UploadFileUtils;
 
@@ -34,6 +36,9 @@ public class UploadController {
 	// bean의 id가 uploadPath인 태그를 참조
 	@Resource(name="uploadPath")
 	String uploadPath;
+	
+	@Inject
+	BoardService boardService;
 	
 	// 업로드 흐름 : 업로드 버튼클릭 => 임시디렉토리에 업로드=> 지정된 디렉토리에 저장 => 파일정보가 file에 저장
 	
@@ -157,6 +162,9 @@ public class UploadController {
         }
         // 원본 파일 삭제
         new File(uploadPath + fileName.replace('/', File.separatorChar)).delete();
+        
+        // 레코드 삭제
+        boardService.deleteFile(fileName);
         
         // 데이터와 http 상태 코드 전송
         return new ResponseEntity<String>("deleted", HttpStatus.OK);

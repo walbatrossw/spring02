@@ -22,4 +22,8 @@ public interface BoardService {
 	public void increaseViewcnt(int bno, HttpSession session) throws Exception;
 	// 07. 게시글 레코드 갯수
 	public int countArticle(String searchOption, String keyword) throws Exception;
+	// 08. 게시글 첨부파일 목록
+	public List<String> getAttach(int bno);
+	// 09. 게시글 첨부파일 삭제
+	public void deleteFile(String fullname);
 }
