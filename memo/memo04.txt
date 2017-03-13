@@ -1,0 +1,33 @@
+* 상품관리
+
+상품관리 패키지
+
+com.example.spring02.controller.shop
+com.example.spring02.model.shop.dao
+com.example.spring02.model.shop.dto
+com.example.spring02.service.shop
+
+*Controller와 RestController
+view가 아닌 data 를 보낼때
+Controller : @RequestBody
+RestController : @RequestBody를 생략
+
+@RequestBody : 클라이언트 => 서버(json 데이터가 입력될 때)
+@ResponseBody : 서버 => 클라이언트(json)
+Rest : REpresentational State Transfer - 하나의 URI가 하나의 고유한 리소스를 대표하도록 설계된 개념
+
+(http://localhost/spring02/reply/list.do)  (?bno=7)
+브라우저에서는 괄호 안을 url로 인식하고 , 물음표 이후는 쿼리스트링 즉, 파라미터로 인식한다.
+http://localhost/spring02/reply/list.do?bno=7
+http://localhost/spring02/reply/list.do?bno=4 ==> list.do 주소에 파라미터 bno에 따라 다른데이터
+http://localhost/spring02/reply/list.do?bno=2
+http://localhost/spring02/reply/list.do?bno=1
+
+http://localhost/spring02/reply/list/1
+http://localhost/spring02/reply/list/2 ==> 브라우저에서는 하나의 url로 인식 
+http://localhost/spring02/reply/list/3
+
+@RestController // 스프링 4.0부터 지원
+
+@PathVariable : url에 포함된 변수
+@RequestParam : parameter에 포함된 변수

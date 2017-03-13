@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>게시글 작성</title>
 <%@ include file="../include/header.jsp" %>
-<%@ include file="../include/sessionCheck.jsp" %>
+<%-- <%@ include file="../include/sessionCheck.jsp" %> --%>
 <script type="text/javascript" src="${path}/include/js/common.js"></script>
 <script>
 	

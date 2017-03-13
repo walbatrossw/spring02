@@ -111,6 +111,7 @@ public class BoardServiceImpl implements BoardService {
 	public List<String> getAttach(int bno) {
 		return boardDao.getAttach(bno);
 	}
+	// 09. 게시글의 첨부파일 삭제 처리
 	@Override
 	public void deleteFile(String fullname) {
 		boardDao.deleteFile(fullname);

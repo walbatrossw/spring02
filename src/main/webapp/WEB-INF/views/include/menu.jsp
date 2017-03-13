@@ -4,6 +4,7 @@
 <a href="${path}/board/list.do">게시판</a>
 <a href="${path}/upload/uploadForm">업로드</a>
 <a href="${path}/upload/uploadAjax">업로드(AJAX)</a>
+<a href="${path}/shop/product/list.do">상품목록</a>
 <c:choose>
 	<c:when test="${sessionScope.userId == null}">
 		<a href="${path}/member/login.do">로그인</a>
