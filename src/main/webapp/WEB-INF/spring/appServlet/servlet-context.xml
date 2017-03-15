@@ -73,6 +73,8 @@
 			<mapping path="/board/update.do"/>
 			<mapping path="/board/delete.do"/>
 			<mapping path="/reply/insertRest.do"/>
+			<mapping path="/shop/cart/insert.do"/>
+			<mapping path="/shop/cart/list.do"/>
 			<beans:ref bean="loginInterceptor"/>
 		</interceptor>
 	</interceptors>

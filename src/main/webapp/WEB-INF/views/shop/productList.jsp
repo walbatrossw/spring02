@@ -12,7 +12,7 @@
 	<table border="1">
 		<tr>
 			<th>상품ID</th>
-			<th>&nbsp;</th>
+			<th>상품이미지</th>
 			<th>상품명</th>
 			<th>가격</th>
 		</tr>

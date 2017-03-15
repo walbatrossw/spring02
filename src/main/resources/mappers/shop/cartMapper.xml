@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="cart">
+	<!-- 1. 장바구니 추가 -->
+	<insert id="insertCart">
+		INSERT INTO tbl_cart(
+			cart_id, user_id, product_id, amount
+		) VALUES (
+			seq_cart.NEXTVAL, #{userId}, #{productId}, #{amount}
+		)
+	</insert>
+	<!-- 2. 장바구니 목록 -->
+	<select id="listCart" resultType="com.example.spring02.model.shop.dto.CartVO">
+		
+		SELECT
+			c.cart_id AS cartId, 
+			c.user_id AS userId,
+			p.product_id As productId,
+			m.user_name AS userName, 
+			p.product_name AS productName, 
+			c.amount, 
+			p.product_price AS productPrice, 
+			(product_price * amount) money
+		FROM
+			tbl_member m, tbl_product p, tbl_cart c
+		WHERE m.user_id = c.user_id
+			AND p.product_id = c.product_id
+			AND c.user_id = #{userId}
+		ORDER BY
+			c.cart_id
+		
+		<!--  	
+		SELECT
+			p.product_id AS productId,
+			p.product_name AS productName, 
+			product_price AS productPrice,
+			SUM(amount) amount, 
+			SUM(product_price * amount) money
+		FROM
+			tbl_member m, tbl_product p, tbl_cart c
+		WHERE 
+			m.user_id = c.user_id 
+		AND p.product_id = c.product_id
+		AND m.user_id = #{userId} 
+		GROUP BY p.product_id, p.product_name, p.product_price
+		ORDER BY amount DESC
+		 -->	
+	</select>
+	
+	<!-- 3. 장바구니 전체 금액 -->
+	<select id="sumMoney" resultType="int">
+		SELECT NVL(SUM(product_price * amount), 0) money
+		FROM 
+		  tbl_cart c, tbl_product p
+		WHERE 
+		  c.product_id = p.product_id AND c.user_id = #{userId}
+	</select>
+	
+	<!-- 4. 장바구니 수정 -->
+	<update id="modifyCart">
+		UPDATE tbl_cart	SET amount = #{amount} 
+		WHERE user_id= #{userId} AND product_id = #{productId}
+	</update>
+	
+	
+	<!-- 5. 장바구니 삭제 -->
+	<delete id="deleteCart">
+		DELETE FROM tbl_cart WHERE cart_id = #{cartId}
+	</delete>
+	
+	<!-- 6. 장바구니에 기존의 상품이 존재하는지 확인 -->
+	<select id="countCart" resultType="int">
+		SELECT COUNT(*) FROM tbl_cart 
+		WHERE user_id= #{userId} AND product_id = #{productId}
+	</select>
+	
+	<!-- 7. 장바구니에 기존의 상품이 존재하면 수정 -->
+	<update id="updateCart">
+		UPDATE tbl_cart	SET amount = amount + #{amount} 
+		WHERE user_id= #{userId} AND product_id = #{productId}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
