@@ -28,14 +28,22 @@ public class ProductServiceImpl implements ProductService {
 	// 03. 상품수정
 	@Override
 	public void updateProduct(ProductVO vo) {
-		// TODO Auto-generated method stub
-
+		productDao.updateProduct(vo);
 	}
 	// 04. 상품삭제
 	@Override
 	public void deleteProduct(int productId) {
-		// TODO Auto-generated method stub
-
+		productDao.deleteProduct(productId);
+	}
+	// 05. 상품추가
+	@Override
+	public void insertProduct(ProductVO vo) {
+		productDao.insertProduct(vo);	
+	}
+	// 06. 상품이미지 삭제를 위한 이미지파일 정보
+	@Override
+	public String fileInfo(int productId) {
+		return productDao.fileInfo(productId);
 	}
 
 }

@@ -8,25 +8,59 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-ma
 	<!-- 01. 상품 전체 리스트 -->
 	<select id="listProduct" resultType="com.example.spring02.model.shop.dto.ProductVO">
 		SELECT  
-			product_id AS productId, 
-			product_name AS productName, 
-			product_price AS productPrice, 
-			product_desc AS productDesc, 
-			product_url AS productUrl
+			product_id AS productId
+			, product_name AS productName 
+			, product_price AS productPrice 
+			, product_desc AS productDesc
+			, product_url AS productUrl
 		FROM tbl_product ORDER BY product_name
 	</select>
 	
 	<!-- 02. 상품 상세보기 -->
 	<select id="detailProduct" resultType="com.example.spring02.model.shop.dto.ProductVO">
 		SELECT
-			product_id AS productId, 
-			product_name AS productName, 
-			product_price AS productPrice, 
-			product_desc AS productDesc, 
-			product_url AS productUrl
+			product_id AS productId 
+			, product_name AS productName 
+			, product_price AS productPrice 
+			, product_desc AS productDesc 
+			, product_url AS productUrl
 		FROM tbl_product 
 		WHERE product_id = #{productId}
 	</select>
+	
+	<!-- 03. 상품 추가하기 -->
+	<insert id="insertProduct">
+		INSERT INTO tbl_product 
+		VALUES (
+			seq_product.NEXTVAL
+			, #{productName}
+			, #{productPrice}
+			, #{productDesc}
+			, #{productUrl}
+		)
+	</insert>
+	
+	<!-- 04. 상품 수정/편집하기 -->
+	<update id="updateProduct">
+		UPDATE tbl_product
+		SET product_name = #{productName}
+			, product_price = #{productPrice}
+			, product_desc = #{productDesc}
+			, product_url = #{productUrl}
+		WHERE
+			product_id = #{productId}
+	</update>
+	
+	<!-- 05. 상품 레코드 삭제처리 -->
+	<delete id="deleteProduct">
+		DELETE FROM tbl_product
+		WHERE product_id = #{productId}
+	</delete>
+	
+	<!-- 06. 삭제를 위한 상품 이미지 파일이름 select -->
+	<select id="fileInfo" resultType="String">
+		SELECT 	product_url AS productUrl
+		FROM tbl_product
+		WHERE product_id = #{productId}
+	</select>
 </mapper>
-
-
